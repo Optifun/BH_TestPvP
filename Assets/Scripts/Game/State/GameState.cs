@@ -2,6 +2,8 @@
 {
     public class GameState
     {
+        public static GameState Instance { get; } = new GameState();
+        
         public GameState()
         {
             LobbyState = new LobbyState();
