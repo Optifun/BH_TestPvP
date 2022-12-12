@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mirror;
+using UnityEngine;
 
 namespace Game.Lobby.Services
 {
@@ -24,6 +25,20 @@ namespace Game.Lobby.Services
         {
             if (Clients.TryGetValue(conn, out var data))
                 ClientDisconnected?.Invoke(conn, data);
+        }
+
+        public override GameObject OnRoomServerCreateRoomPlayer(NetworkConnectionToClient conn)
+        {
+            RoomPlayer roomPlayer = Instantiate(roomPlayerPrefab, Vector3.zero, Quaternion.identity) as RoomPlayer;
+            if (roomPlayer == null)
+            {
+                Debug.LogError("Room prefab missing RoomPlayer script");
+                return null;
+            }
+
+            var authData = conn.authenticationData as AuthenticationData;
+            roomPlayer.Username = authData.Username;
+            return roomPlayer.gameObject;
         }
 
         public override void OnRoomServerPlayersReady()
