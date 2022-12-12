@@ -6,7 +6,7 @@ namespace Game.Lobby.View
     {
         private LobbyPresenter _presenter;
 
-        private GameObject ConnectionForm;
+        [SerializeField] private GameObject ConnectionForm;
 
         public void Initialize(LobbyPresenter presenter)
         {
