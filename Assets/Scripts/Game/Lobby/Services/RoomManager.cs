@@ -11,7 +11,7 @@ namespace Game.Lobby.Services
         public event Action<NetworkConnection, AuthenticationData> ClientDisconnected;
         public Action<NetworkConnection, RoomPlayer> ClientEnterRoom;
         public Action<NetworkConnection, RoomPlayer> ClientExitRoom;
-        public event Action PlayersReady;
+        public event Action<bool> PlayersReady;
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
 
@@ -42,9 +42,13 @@ namespace Game.Lobby.Services
             return roomPlayer.gameObject;
         }
 
-        public override void OnRoomServerPlayersReady()
-        {
-            PlayersReady?.Invoke();
-        }
+        public void SwitchToArena() =>
+            ServerChangeScene(GameplayScene);
+
+        public override void OnRoomServerPlayersReady() =>
+            PlayersReady?.Invoke(true);
+
+        public override void OnRoomServerPlayersNotReady() =>
+            PlayersReady?.Invoke(false);
     }
 }

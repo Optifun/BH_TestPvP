@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Game.Lobby.Services;
-using Mirror;
 using TMPro;
 using UI;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace Game.Lobby.View
@@ -16,6 +13,8 @@ namespace Game.Lobby.View
 
         [SerializeField] private ScrollRect _playerBubblesContainer;
         [SerializeField] private ButtonContainer _readyButton;
+        [SerializeField] private Button _startMatchButton;
+
         [SerializeField] private Button _hostButton;
         [SerializeField] private Button _connectButton;
         [SerializeField] private TMP_InputField _userNameInput;
@@ -35,12 +34,14 @@ namespace Game.Lobby.View
             _connectButton.onClick.AddListener(OnConnectButtonClick);
             _readyButton.Button.onClick.AddListener(OnReadyClick);
             _userNameInput.onEndEdit.AddListener(OnUsernameChanged);
+            _startMatchButton.onClick.AddListener(OnStartMatch);
         }
 
         private void Awake()
         {
             _connectionForm.SetActive(false);
             _lobbyWindow.SetActive(false);
+            _startMatchButton.gameObject.SetActive(false);
         }
 
         public void GotoConnectionForm()
@@ -49,11 +50,16 @@ namespace Game.Lobby.View
             _connectionForm.SetActive(true);
         }
 
-        public void GotoLobby()
+        public void GotoLobby(bool isServer)
         {
             _lobbyWindow.SetActive(true);
             _connectionForm.SetActive(false);
+            _startMatchButton.gameObject.SetActive(isServer);
+            ToggleStartMatchBtn(false);
         }
+
+        public void ToggleStartMatchBtn(bool active) =>
+            _startMatchButton.enabled = active;
 
         public void DisplayPlayers(List<RoomPlayer> players)
         {
@@ -82,7 +88,7 @@ namespace Game.Lobby.View
             _localPlayer.OnReadyChanged += OnLocalPlayerReadyChanged;
         }
 
-        private void OnUsernameChanged(string value) => 
+        private void OnUsernameChanged(string value) =>
             _presenter.SetUsername(value);
 
         private void OnConnectButtonClick() =>
@@ -91,8 +97,11 @@ namespace Game.Lobby.View
         private void OnHostButtonClick() =>
             _presenter.HostGame();
 
+        private void OnStartMatch() =>
+            _presenter.StartMatch();
+
         private void OnReadyClick() =>
-            _presenter.ToggleReady();
+            _presenter.TogglePlayerReady();
 
         private void OnLocalPlayerReadyChanged(RoomPlayer _, bool ready) =>
             _readyButton.Text.text = ready ? "Unready" : "Ready";

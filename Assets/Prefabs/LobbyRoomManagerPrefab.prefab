@@ -92,7 +92,7 @@ MonoBehaviour:
   spawnPrefabs: []
   timeInterpolationGui: 0
   showRoomGUI: 0
-  minPlayers: 6
+  minPlayers: 1
   roomPlayerPrefab: {fileID: 6724240059516429328, guid: 1a455f3137c1f7446964758c76f9b4fa, type: 3}
   RoomScene: Assets/Scenes/OnlineLobby.unity
   GameplayScene: Assets/Scenes/ArenaScene.unity

@@ -8,6 +8,7 @@ using Game.State;
 using Mirror;
 using Unity.VisualScripting;
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace Game.Lobby
 {
@@ -27,34 +28,35 @@ namespace Game.Lobby
 
             _roomManager.ClientEnterRoom += OnClientConnected;
             _roomManager.ClientExitRoom += OnClientDisconnected;
+            _roomManager.PlayersReady += OnPlayersReady;
         }
 
-        public void GotoConnection()
-        {
+        public void GotoConnection() =>
             _lobbyUI.GotoConnectionForm();
-        }
 
         public void HostGame()
         {
+            _gameState.LobbyState.IsServer = true;
             _roomManager.StartHost();
-            _lobbyUI.GotoLobby();
+            _lobbyUI.GotoLobby(true);
         }
 
         public void Connect(string host)
         {
+            _gameState.LobbyState.IsServer = false;
             if (_gameState.LobbyState.Username == "") return;
             _roomManager.StartClient(new Uri(host));
+            _lobbyUI.GotoLobby(false);
         }
 
-        public void ToggleReady()
-        {
+        public void StartMatch() =>
+            _roomManager.SwitchToArena();
+
+        public void TogglePlayerReady() =>
             _localPlayer.CmdChangeReadyState(!_localPlayer.readyToBegin);
-        }
 
-        public void SetUsername(string username)
-        {
+        public void SetUsername(string username) =>
             _gameState.LobbyState.Username = username;
-        }
 
         private void OnClientConnected(NetworkConnection conn, RoomPlayer player)
         {
@@ -70,5 +72,12 @@ namespace Game.Lobby
 
         private void OnClientDisconnected(NetworkConnection conn, RoomPlayer player) =>
             _lobbyUI.RemovePlayer(player);
+
+        private void OnPlayersReady(bool value)
+        {
+            if (value)
+                Debug.Log("All players are ready");
+            _lobbyUI.ToggleStartMatchBtn(value);
+        }
     }
 }
