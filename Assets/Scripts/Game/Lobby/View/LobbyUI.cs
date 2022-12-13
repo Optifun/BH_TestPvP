@@ -18,9 +18,11 @@ namespace Game.Lobby.View
         [SerializeField] private ButtonContainer _readyButton;
         [SerializeField] private Button _hostButton;
         [SerializeField] private Button _connectButton;
+        [SerializeField] private TMP_InputField _userNameInput;
         [SerializeField] private TMP_InputField _addressInput;
 
         [SerializeField] private GameObject _connectionForm;
+        [SerializeField] private GameObject _lobbyWindow;
 
         private Dictionary<RoomPlayer, PlayerBubble> _playersList = new();
         private LobbyPresenter _presenter;
@@ -32,16 +34,25 @@ namespace Game.Lobby.View
             _hostButton.onClick.AddListener(OnHostButtonClick);
             _connectButton.onClick.AddListener(OnConnectButtonClick);
             _readyButton.Button.onClick.AddListener(OnReadyClick);
+            _userNameInput.onEndEdit.AddListener(OnUsernameChanged);
         }
 
-        private void OnReadyClick()
+        private void Awake()
         {
-            _presenter.ToggleReady();
+            _connectionForm.SetActive(false);
+            _lobbyWindow.SetActive(false);
         }
 
-        public void ShowConnectionForm()
+        public void GotoConnectionForm()
         {
+            _lobbyWindow.SetActive(false);
             _connectionForm.SetActive(true);
+        }
+
+        public void GotoLobby()
+        {
+            _lobbyWindow.SetActive(true);
+            _connectionForm.SetActive(false);
         }
 
         public void DisplayPlayers(List<RoomPlayer> players)
@@ -71,11 +82,17 @@ namespace Game.Lobby.View
             _localPlayer.OnReadyChanged += OnLocalPlayerReadyChanged;
         }
 
+        private void OnUsernameChanged(string value) => 
+            _presenter.SetUsername(value);
+
         private void OnConnectButtonClick() =>
             _presenter.Connect(_addressInput.text);
 
         private void OnHostButtonClick() =>
             _presenter.HostGame();
+
+        private void OnReadyClick() =>
+            _presenter.ToggleReady();
 
         private void OnLocalPlayerReadyChanged(RoomPlayer _, bool ready) =>
             _readyButton.Text.text = ready ? "Unready" : "Ready";
@@ -101,6 +118,7 @@ namespace Game.Lobby.View
             _hostButton.onClick.RemoveListener(OnHostButtonClick);
             _connectButton.onClick.RemoveListener(OnConnectButtonClick);
             _readyButton.Button.onClick.RemoveListener(OnReadyClick);
+            _userNameInput.onEndEdit.RemoveListener(OnUsernameChanged);
         }
     }
 }

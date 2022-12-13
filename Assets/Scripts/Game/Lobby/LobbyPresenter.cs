@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Game.Lobby.Services;
 using Game.Lobby.View;
 using Game.State;
 using Mirror;
+using Unity.VisualScripting;
+using UnityEngine;
 
 namespace Game.Lobby
 {
@@ -27,16 +31,18 @@ namespace Game.Lobby
 
         public void GotoConnection()
         {
-            _lobbyUI.ShowConnectionForm();
+            _lobbyUI.GotoConnectionForm();
         }
 
         public void HostGame()
         {
             _roomManager.StartHost();
+            _lobbyUI.GotoLobby();
         }
 
         public void Connect(string host)
         {
+            if (_gameState.LobbyState.Username == "") return;
             _roomManager.StartClient(new Uri(host));
         }
 
@@ -52,6 +58,21 @@ namespace Game.Lobby
 
         private void OnClientConnected(NetworkConnection connection, AuthenticationData _)
         {
+            _lobbyUI.StartCoroutine(HandlePlayerConnection(connection));
+        }
+
+        private void OnClientDisconnected(NetworkConnection connection, AuthenticationData _) =>
+            _lobbyUI.RemovePlayer(connection.identity.GetComponent<RoomPlayer>());
+
+        private IEnumerator HandlePlayerConnection(NetworkConnection connection)
+        {
+            yield return WaitTillPlayerConnected(connection, 3);
+
+            if (connection.identity == null)
+            {
+                yield break;
+            }
+
             var roomPlayer = connection.identity.GetComponent<RoomPlayer>();
             _lobbyUI.DisplayPlayer(roomPlayer);
 
@@ -62,7 +83,15 @@ namespace Game.Lobby
             }
         }
 
-        private void OnClientDisconnected(NetworkConnection connection, AuthenticationData _) =>
-            _lobbyUI.RemovePlayer(connection.identity.GetComponent<RoomPlayer>());
+        private IEnumerator WaitTillPlayerConnected(NetworkConnection connection, float seconds)
+        {
+            var stopwatch = Stopwatch.StartNew();
+            while (connection.identity == null && stopwatch.ElapsedMilliseconds / 1000f < seconds)
+            {
+                seconds--;
+                yield return new WaitForEndOfFrame();
+            }
+            stopwatch.Stop();
+        }
     }
 }
