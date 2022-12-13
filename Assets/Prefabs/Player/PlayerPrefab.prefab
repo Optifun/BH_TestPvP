@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9109462212544236192}
   - component: {fileID: 9109462212544236195}
   - component: {fileID: 9109462212544236194}
+  - component: {fileID: -2362182362557275195}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -78,3 +79,17 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!114 &-2362182362557275195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109462212544236253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4587d6d1bc94c938b50905df70b65e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Identity>k__BackingField: {fileID: 9109462212544236195}
+  <Transform>k__BackingField: {fileID: 9109462212544236194}
