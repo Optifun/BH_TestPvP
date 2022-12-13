@@ -80,8 +80,8 @@ MonoBehaviour:
   autoStartServerBuild: 1
   autoConnectClientBuild: 0
   sendRate: 30
-  offlineScene: 
-  onlineScene: 
+  offlineScene: Assets/Scenes/OfflineLobby.unity
+  onlineScene: Assets/Scenes/OnlineLobby.unity
   transport: {fileID: 3302794944171955201}
   networkAddress: localhost
   maxConnections: 6
@@ -94,7 +94,7 @@ MonoBehaviour:
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: 6724240059516429328, guid: 1a455f3137c1f7446964758c76f9b4fa, type: 3}
-  RoomScene: Assets/Scenes/Lobby.unity
+  RoomScene: Assets/Scenes/OfflineLobby.unity
   GameplayScene: Assets/Scenes/ArenaScene.unity
   _allPlayersReady: 0
   roomSlots: []
