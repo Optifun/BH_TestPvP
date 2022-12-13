@@ -30,14 +30,14 @@ namespace Game.Lobby.Services
         {
             OnRoomEnter?.Invoke(this);
             var roomManager = (RoomManager) NetworkManager.singleton;
-            roomManager.ClientEnterRoom.Invoke(connectionToServer, this);
+            roomManager.ClientEnterRoom?.Invoke(connectionToServer, this);
         }
 
         public override void OnClientExitRoom()
         {
             OnRoomExit?.Invoke(this);
             var roomManager = (RoomManager) NetworkManager.singleton;
-            roomManager.ClientExitRoom.Invoke(connectionToServer, this);
+            roomManager.ClientExitRoom?.Invoke(connectionToServer, this);
         }
     }
 }

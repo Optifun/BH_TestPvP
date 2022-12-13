@@ -25,8 +25,8 @@ namespace Game.Lobby
             _roomManager = roomManager;
             _gameState = gameState;
 
-            _roomManager.ClientConnected += OnClientConnected;
-            _roomManager.ClientDisconnected += OnClientDisconnected;
+            _roomManager.ClientEnterRoom += OnClientConnected;
+            _roomManager.ClientExitRoom += OnClientDisconnected;
         }
 
         public void GotoConnection()
@@ -56,42 +56,19 @@ namespace Game.Lobby
             _gameState.LobbyState.Username = username;
         }
 
-        private void OnClientConnected(NetworkConnection connection, AuthenticationData _)
+        private void OnClientConnected(NetworkConnection conn, RoomPlayer player)
         {
-            _lobbyUI.StartCoroutine(HandlePlayerConnection(connection));
-        }
-
-        private void OnClientDisconnected(NetworkConnection connection, AuthenticationData _) =>
-            _lobbyUI.RemovePlayer(connection.identity.GetComponent<RoomPlayer>());
-
-        private IEnumerator HandlePlayerConnection(NetworkConnection connection)
-        {
-            yield return WaitTillPlayerConnected(connection, 3);
-
-            if (connection.identity == null)
-            {
-                yield break;
-            }
-
-            var roomPlayer = connection.identity.GetComponent<RoomPlayer>();
+            var roomPlayer = conn.identity.GetComponent<RoomPlayer>();
             _lobbyUI.DisplayPlayer(roomPlayer);
 
-            if (NetworkClient.localPlayer == connection.identity)
+            if (NetworkClient.localPlayer == conn.identity)
             {
                 _localPlayer = roomPlayer;
                 _lobbyUI.AttachLocalPlayer(_localPlayer);
             }
         }
 
-        private IEnumerator WaitTillPlayerConnected(NetworkConnection connection, float seconds)
-        {
-            var stopwatch = Stopwatch.StartNew();
-            while (connection.identity == null && stopwatch.ElapsedMilliseconds / 1000f < seconds)
-            {
-                seconds--;
-                yield return new WaitForEndOfFrame();
-            }
-            stopwatch.Stop();
-        }
+        private void OnClientDisconnected(NetworkConnection conn, RoomPlayer player) =>
+            _lobbyUI.RemovePlayer(player);
     }
 }
