@@ -5,8 +5,8 @@ namespace Game.Lobby.Services
 {
     public class RoomPlayer : NetworkRoomPlayer
     {
-        public event EventHandler<string> OnUsernameChanged;
-        public event EventHandler<bool> OnReadyChanged;
+        public event Action<RoomPlayer, string> OnUsernameChanged;
+        public event Action<RoomPlayer, bool> OnReadyChanged;
 
         [SyncVar(hook = nameof(UsernameUpdatedCallback))]
         public string Username;
