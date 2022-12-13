@@ -18,6 +18,7 @@ namespace Game.Lobby
             var authenticator = roomManager.authenticator as ClientAuthenticator;
             authenticator.Initialize(GameState.Instance.LobbyState);
             lobbyUI.Initialize(lobbyPresenter);
+            DontDestroyOnLoad(lobbyUI);
 
             lobbyPresenter.GotoConnection();
         }

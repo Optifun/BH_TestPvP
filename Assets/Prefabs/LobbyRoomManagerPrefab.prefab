@@ -87,14 +87,14 @@ MonoBehaviour:
   maxConnections: 6
   authenticator: {fileID: 3766011000084824458}
   playerPrefab: {fileID: 9109462212544236253, guid: b1460855aa198f34790cf61e50ed5c11, type: 3}
-  autoCreatePlayer: 0
+  autoCreatePlayer: 1
   playerSpawnMethod: 0
   spawnPrefabs: []
   timeInterpolationGui: 0
-  showRoomGUI: 1
-  minPlayers: 1
+  showRoomGUI: 0
+  minPlayers: 6
   roomPlayerPrefab: {fileID: 6724240059516429328, guid: 1a455f3137c1f7446964758c76f9b4fa, type: 3}
-  RoomScene: Assets/Scenes/OfflineLobby.unity
+  RoomScene: Assets/Scenes/OnlineLobby.unity
   GameplayScene: Assets/Scenes/ArenaScene.unity
   _allPlayersReady: 0
   roomSlots: []
