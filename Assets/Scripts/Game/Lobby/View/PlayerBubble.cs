@@ -15,13 +15,15 @@ namespace Game.Lobby.View
             _player = player;
             _player.OnReadyChanged += OnPlayerReadyChanged;
             _player.OnUsernameChanged += OnPlayerUsernameChanged;
+            OnPlayerUsernameChanged(_player, _player.Username);
+            OnPlayerReadyChanged(_player, _player.readyToBegin);
         }
 
-        private void OnPlayerUsernameChanged(RoomPlayer sender, string newName) =>
+        private void OnPlayerUsernameChanged(RoomPlayer _, string newName) =>
             _text.text = newName;
 
-        private void OnPlayerReadyChanged(RoomPlayer sender, bool ready) =>
-            _text.color = sender.readyToBegin ? Color.green : Color.red;
+        private void OnPlayerReadyChanged(RoomPlayer _, bool ready) =>
+            _text.color = ready ? Color.green : Color.red;
 
 
         private void OnDestroy()
