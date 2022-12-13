@@ -15,6 +15,8 @@ namespace Game.Lobby
             var roomManager = Instantiate(RoomManagerPrefab);
             var lobbyUI = Instantiate(LobbyUIPrefab);
             var lobbyPresenter = new LobbyPresenter(roomManager, lobbyUI, GameState.Instance);
+            var authenticator = roomManager.authenticator as ClientAuthenticator;
+            authenticator.Initialize(GameState.Instance.LobbyState);
             lobbyUI.Initialize(lobbyPresenter);
 
             lobbyPresenter.GotoConnection();
