@@ -9,10 +9,11 @@ namespace Game.Lobby.Services
     {
         public event Action<NetworkConnection, AuthenticationData> ClientConnected;
         public event Action<NetworkConnection, AuthenticationData> ClientDisconnected;
+        public Action<NetworkConnection, RoomPlayer> ClientEnterRoom;
+        public Action<NetworkConnection, RoomPlayer> ClientExitRoom;
         public event Action PlayersReady;
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
-
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)
         {
