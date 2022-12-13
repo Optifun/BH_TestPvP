@@ -1,4 +1,5 @@
 using System.Linq;
+using Cinemachine;
 using UnityEngine;
 
 namespace Static
@@ -6,6 +7,8 @@ namespace Static
     public class LevelStaticData : MonoBehaviour
     {
         public Transform[] SpawnPoints;
+        public Camera MainCamera;
+        public CinemachineVirtualCamera ThirdPersonCamera;
 
         private void Reset()
         {
