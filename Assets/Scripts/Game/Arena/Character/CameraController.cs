@@ -9,7 +9,8 @@ namespace Game.Arena.Character
     public class CameraController : MonoBehaviour
     {
         [SerializeField] private PlayerInput _input;
-        [SerializeField] private Transform _cameraLookAt;
+        [SerializeField] private Transform _headTransform;
+        [SerializeField] private Transform _shouldersTransform;
         [SerializeField] private Transform _character;
         private InputAction _lookAction;
         [SerializeField] private float _rotationSensitive = 0.3f;
@@ -21,8 +22,8 @@ namespace Game.Arena.Character
 
         public void AttachCamera(CinemachineVirtualCamera camera)
         {
-            camera.Follow = _character;
-            camera.LookAt = _cameraLookAt;
+            camera.Follow = _headTransform;
+            camera.LookAt = null;
         }
 
         private void Update()
@@ -32,12 +33,14 @@ namespace Game.Arena.Character
 
         private void RotateCamera(Vector2 look)
         {
-            var rotation = _cameraLookAt.transform.rotation;
-            rotation *= Quaternion.AngleAxis(look.x * _rotationSensitive, Vector3.up);
-            rotation *= Quaternion.AngleAxis(look.y * _rotationSensitive, Vector3.left);
-            _cameraLookAt.transform.rotation = rotation;
+            var horizontal = Quaternion.AngleAxis(look.x * _rotationSensitive, Vector3.up);
+            var vertical = Quaternion.AngleAxis(look.y * _rotationSensitive, Vector3.left);
+            var newRotation = _headTransform.rotation * horizontal * vertical;
 
-            var angles = _cameraLookAt.transform.localEulerAngles;
+            _headTransform.rotation = newRotation;
+            _shouldersTransform.rotation = Quaternion.Euler(0, newRotation.eulerAngles.y, 0);
+
+            var angles = _headTransform.localEulerAngles;
             angles.z = 0;
 
             var vAngle = angles.x;
@@ -51,7 +54,7 @@ namespace Game.Arena.Character
                 angles.x = 320;
             }
 
-            _cameraLookAt.transform.localEulerAngles = angles;
+            _headTransform.transform.localEulerAngles = angles;
         }
     }
 }

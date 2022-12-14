@@ -28,7 +28,8 @@ namespace Game.Arena
 
         public CharacterContainer SetupCharacter(CharacterContainer container)
         {
-            container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
+            if (container.Identity.isLocalPlayer)
+                container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
             return container;
         }
 
