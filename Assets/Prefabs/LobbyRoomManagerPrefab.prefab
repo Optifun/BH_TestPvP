@@ -99,6 +99,7 @@ MonoBehaviour:
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
+  ArenaManagerPrefab: {fileID: 250504671928074883, guid: c327c02c273f0634bbb965a8b54206c7, type: 3}
 --- !u!114 &3766011000084824458
 MonoBehaviour:
   m_ObjectHideFlags: 0

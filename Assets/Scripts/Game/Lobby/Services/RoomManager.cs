@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using Game.Arena;
 using Game.Arena.Character;
+using Game.Lobby.View;
 using Mirror;
 using Static;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = System.Object;
 
 namespace Game.Lobby.Services
 {
@@ -15,11 +17,21 @@ namespace Game.Lobby.Services
         public event Action<NetworkConnection, AuthenticationData> ClientDisconnected;
         public Action<NetworkConnection, RoomPlayer> ClientEnterRoom;
         public Action<NetworkConnection, RoomPlayer> ClientExitRoom;
+
+        public ArenaManager ArenaManagerPrefab;
         private CharacterFactory _characterFactory;
         private LevelStaticData _levelData;
+        private ArenaManager _arenaManager;
+        private LobbyPresenter _lobbyPresenter;
+        
         public event Action<bool> PlayersReady;
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
+
+        public void Initialize(LobbyPresenter lobbyPresenter)
+        {
+            _lobbyPresenter = lobbyPresenter;
+        }
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)
         {
@@ -54,17 +66,18 @@ namespace Game.Lobby.Services
             NetworkServer.AddPlayerForConnection(conn, container.gameObject);
         }
 
-        public void SetupCharacter(CharacterContainer container)
-        {
-            _characterFactory.SetupCharacter(container);
-        }
+        public void SetupCharacter(CharacterContainer container) =>
+            _arenaManager.SetupPlayer(container);
 
         public override void OnRoomServerSceneChanged(string sceneName)
         {
             if (sceneName == GameplayScene)
             {
+                _lobbyPresenter.Hide();
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
+                _arenaManager = GameObject.Instantiate(ArenaManagerPrefab);
+                _arenaManager.Initialize(this, _characterFactory);
             }
         }
 
@@ -74,6 +87,8 @@ namespace Game.Lobby.Services
             {
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
+                _arenaManager = FindObjectOfType<ArenaManager>();
+                _arenaManager.Initialize(this, _characterFactory);
             }
         }
 

@@ -39,9 +39,14 @@ namespace Game.Lobby.View
 
         private void Awake()
         {
+            HideMenu();
+            _startMatchButton.gameObject.SetActive(false);
+        }
+
+        public void HideMenu()
+        {
             _connectionForm.SetActive(false);
             _lobbyWindow.SetActive(false);
-            _startMatchButton.gameObject.SetActive(false);
         }
 
         public void GotoConnectionForm()

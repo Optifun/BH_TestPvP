@@ -79,5 +79,10 @@ namespace Game.Lobby
                 Debug.Log("All players are ready");
             _lobbyUI.ToggleStartMatchBtn(value);
         }
+
+        public void Hide()
+        {
+            _lobbyUI.HideMenu();
+        }
     }
 }
