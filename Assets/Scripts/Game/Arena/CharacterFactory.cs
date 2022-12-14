@@ -28,7 +28,7 @@ namespace Game.Arena
 
         public CharacterContainer SetupCharacter(CharacterContainer container)
         {
-            _levelStaticData.ThirdPersonCamera.Follow = container.transform;
+            container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
             return container;
         }
 
