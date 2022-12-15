@@ -16,20 +16,27 @@ namespace Game.Arena
         private SyncDictionary<uint, HitProgress> _playerHits = new();
         private Dictionary<uint, CharacterContainer> _characters = new();
         private ArenaStaticData _arenaStaticData;
+        private LevelStaticData _levelStaticData;
         private RoomManager _roomManager;
-        private CharacterFactory _factory;
 
-        public void Initialize(RoomManager roomManager, ArenaStaticData arenaStaticData, CharacterFactory factory)
+        public void Initialize(
+            RoomManager roomManager,
+            ArenaStaticData arenaStaticData,
+            LevelStaticData levelStaticData)
         {
-            _factory = factory;
             _roomManager = roomManager;
+            _levelStaticData = levelStaticData;
             _arenaStaticData = arenaStaticData;
         }
 
         public void SetupPlayer(CharacterContainer container)
         {
-            _factory.SetupCharacter(container);
             _characters.Add(container.Identity.netId, container);
+            if (container.Identity.isLocalPlayer)
+            {
+                AttachCamera(container);
+                InitializeComponents(container);
+            }
 
             if (isServer)
             {
@@ -80,6 +87,21 @@ namespace Game.Arena
                 enemyProgress.Hists.Add(new PlayerHits(playerIdentity.netId, 0));
                 selfProgress.Hists.Add(new PlayerHits(enemyId, 0));
             }
+        }
+
+        private void InitializeComponents(CharacterContainer container)
+        {
+            container.Movement.enabled = true;
+            container.Input.enabled = true;
+            container.CameraController.enabled = true;
+            
+            container.Input.ActivateInput();
+            container.ChargeAbility.Initialize(this, _arenaStaticData);
+        }
+
+        public void AttachCamera(CharacterContainer container)
+        {
+            container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
         }
     }
 }

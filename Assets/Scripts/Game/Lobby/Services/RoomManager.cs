@@ -79,7 +79,7 @@ namespace Game.Lobby.Services
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
                 _arenaManager = GameObject.Instantiate(ArenaManagerPrefab);
-                _arenaManager.Initialize(this, ArenaStaticData, _characterFactory);
+                _arenaManager.Initialize(this, ArenaStaticData, _levelData);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Game.Lobby.Services
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
                 _arenaManager = FindObjectOfType<ArenaManager>();
-                _arenaManager.Initialize(this, ArenaStaticData, _characterFactory);
+                _arenaManager.Initialize(this, ArenaStaticData, _levelData);
             }
         }
 

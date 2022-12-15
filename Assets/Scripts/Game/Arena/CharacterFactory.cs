@@ -26,12 +26,7 @@ namespace Game.Arena
             return container;
         }
 
-        public CharacterContainer SetupCharacter(CharacterContainer container)
-        {
-            if (container.Identity.isLocalPlayer)
-                container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
-            return container;
-        }
+
 
         private Transform PickRandomPoint()
         {

@@ -13,12 +13,13 @@ namespace Game.Arena.Character
         [field: SerializeField] public PlayerInput Input { get; private set; }
         [field: SerializeField] public CameraController CameraController { get; private set; }
         [field: SerializeField] public CharacterMovement Movement { get; private set; }
+        [field: SerializeField] public Invincibility Invincibility { get; private set; }
+        [field: SerializeField] public ChargeAbility ChargeAbility { get; private set; }
 
         private RoomManager _roomManager;
 
         private void Start()
         {
-            Input.ActivateInput();
             _roomManager = NetworkManager.singleton as RoomManager;
             _roomManager.SetupCharacter(this);
         }
