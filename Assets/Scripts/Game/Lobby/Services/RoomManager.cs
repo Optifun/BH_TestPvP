@@ -19,11 +19,13 @@ namespace Game.Lobby.Services
         public Action<NetworkConnection, RoomPlayer> ClientExitRoom;
 
         public ArenaManager ArenaManagerPrefab;
+        public ArenaStaticData ArenaStaticData;
+
         private CharacterFactory _characterFactory;
         private LevelStaticData _levelData;
         private ArenaManager _arenaManager;
         private LobbyPresenter _lobbyPresenter;
-        
+
         public event Action<bool> PlayersReady;
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
@@ -77,7 +79,7 @@ namespace Game.Lobby.Services
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
                 _arenaManager = GameObject.Instantiate(ArenaManagerPrefab);
-                _arenaManager.Initialize(this, _characterFactory);
+                _arenaManager.Initialize(this, ArenaStaticData, _characterFactory);
             }
         }
 
@@ -88,7 +90,7 @@ namespace Game.Lobby.Services
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
                 _arenaManager = FindObjectOfType<ArenaManager>();
-                _arenaManager.Initialize(this, _characterFactory);
+                _arenaManager.Initialize(this, ArenaStaticData, _characterFactory);
             }
         }
 
