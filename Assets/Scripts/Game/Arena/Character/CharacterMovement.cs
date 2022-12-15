@@ -35,7 +35,7 @@ namespace Game.Arena.Character
 
         private Vector3 MovementImpulse(Vector2 direction)
         {
-            if (direction != Vector2.zero)
+            if (direction != Vector2.zero && _controller.isGrounded)
             {
                 var impulse = _shouldersTransform.right * direction.x + _shouldersTransform.forward * direction.y;
                 return impulse.normalized * MaximumSpeed;
@@ -49,6 +49,11 @@ namespace Game.Arena.Character
             var lookRotation = Quaternion.LookRotation(movementDirection);
             var yAngle = lookRotation.eulerAngles.y;
             return Quaternion.Euler(0, yAngle, 0);
+        }
+
+        public void AddImpulse(Vector3 pushImpulse)
+        {
+            _velocity += pushImpulse;
         }
     }
 }
