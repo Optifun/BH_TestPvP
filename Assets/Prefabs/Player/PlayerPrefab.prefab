@@ -472,6 +472,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf30c400b7fd4654973919074ee62851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncDirection: 1
+  syncMode: 0
+  syncInterval: 0.1
   movement: {fileID: 1541193838}
   model: {fileID: 4095348813756858827}
 --- !u!114 &1541193838
