@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Mirror;
+using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace Game.Arena.Character
@@ -38,7 +39,7 @@ namespace Game.Arena.Character
         {
             return;
             if (chargeAbility.IsCharging) return;
-            
+
             inputEnabled = false;
             chargeAbility.TriggerCharge(movement.Movement);
         }

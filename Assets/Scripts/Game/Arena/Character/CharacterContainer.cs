@@ -1,6 +1,4 @@
-﻿using Cinemachine;
-using Game.Lobby.Services;
-using Mirror;
+﻿using Mirror;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -17,13 +15,5 @@ namespace Game.Arena.Character
         [field: SerializeField] public CharacterRotation Rotation { get; private set; }
         [field: SerializeField] public Invincibility Invincibility { get; private set; }
         [field: SerializeField] public ChargeAbility ChargeAbility { get; private set; }
-
-        private RoomManager _roomManager;
-
-        private void Start()
-        {
-            _roomManager = NetworkManager.singleton as RoomManager;
-            _roomManager.SetupCharacter(this);
-        }
     }
 }

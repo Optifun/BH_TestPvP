@@ -277,6 +277,7 @@ GameObject:
   - component: {fileID: 1541193838}
   - component: {fileID: 7319631017655871910}
   - component: {fileID: 6077796790371805559}
+  - component: {fileID: 9061711475769952492}
   m_Layer: 0
   m_Name: PlayerPrefab
   m_TagString: Untagged
@@ -349,10 +350,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 0
+  syncDirection: 1
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 4095348813756858827}
+  target: {fileID: 9109462212544236192}
   clientAuthority: 0
   onlySyncOnChange: 1
   bufferResetMultiplier: 5
@@ -360,7 +361,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
   syncPosition: 1
-  syncRotation: 1
+  syncRotation: 0
   syncScale: 0
   showGizmos: 0
   showOverlay: 0
@@ -522,3 +523,19 @@ MonoBehaviour:
   syncInterval: 0.1
   modelRenderer: {fileID: 5033624732252607407}
   movement: {fileID: 0}
+--- !u!114 &9061711475769952492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109462212544236253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f5a20c712d244d3ba016374087f65cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0.1
+  container: {fileID: -2362182362557275195}
