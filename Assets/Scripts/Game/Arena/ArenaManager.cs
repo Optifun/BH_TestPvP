@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Game.Arena.Character;
+using Game.Arena.Progress;
 using Game.Lobby.Services;
 using Mirror;
 using Static;
@@ -57,7 +58,7 @@ namespace Game.Arena
         [Command]
         public void CmdRegisterHit(uint gainerId, uint targetId)
         {
-            var hitProgress = _playerHits[gainerId].Hists;
+            var hitProgress = _playerHits[gainerId].Hits;
             var hitId = hitProgress.FindIndex(hits => hits.NetId == targetId);
 
             var playerHits = hitProgress[hitId];
@@ -76,7 +77,7 @@ namespace Game.Arena
 
         private void CheckWinner(uint gainerId)
         {
-            var hitsList = _playerHits[gainerId].Hists;
+            var hitsList = _playerHits[gainerId].Hits;
             if (hitsList.All(hit => hit.HitCount >= _arenaStaticData.RequireHitCount))
             {
                 var score = hitsList.Sum(hits => hits.HitCount);
@@ -87,15 +88,17 @@ namespace Game.Arena
         private void FillProgress(CharacterContainer container)
         {
             var playerIdentity = container.Identity;
-            var selfProgress = new HitProgress();
+            var selfProgress = new HitProgress {Hits = new List<PlayerHits>()};
             _playerHits.Add(playerIdentity.netId, selfProgress);
             foreach (var pair in _playerHits)
             {
+                if (pair.Key == playerIdentity.netId) continue;
+
                 var enemyProgress = pair.Value;
                 var enemyId = pair.Key;
 
-                enemyProgress.Hists.Add(new PlayerHits(playerIdentity.netId, 0));
-                selfProgress.Hists.Add(new PlayerHits(enemyId, 0));
+                enemyProgress.Hits.Add(new PlayerHits(playerIdentity.netId, 0));
+                selfProgress.Hits.Add(new PlayerHits(enemyId, 0));
             }
         }
 

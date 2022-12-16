@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 
-namespace Game.Arena
+namespace Game.Arena.Progress
 {
     public struct HitProgress
     {
-        public List<PlayerHits> Hists;
+        public List<PlayerHits> Hits;
     }
 }
