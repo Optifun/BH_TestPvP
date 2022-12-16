@@ -57,6 +57,7 @@ namespace Game.Lobby.View
 
         public void GotoLobby(bool isServer)
         {
+            _readyButton.enabled = false;
             _lobbyWindow.SetActive(true);
             _connectionForm.SetActive(false);
             _startMatchButton.gameObject.SetActive(isServer);
@@ -89,6 +90,7 @@ namespace Game.Lobby.View
 
         public void AttachLocalPlayer(RoomPlayer roomPlayer)
         {
+            _readyButton.enabled = true;
             _localPlayer = roomPlayer;
             _localPlayer.OnReadyChanged += OnLocalPlayerReadyChanged;
         }

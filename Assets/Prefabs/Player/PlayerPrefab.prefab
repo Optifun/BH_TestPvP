@@ -352,7 +352,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  target: {fileID: 9109462212544236192}
+  target: {fileID: 4095348813756858827}
   clientAuthority: 0
   onlySyncOnChange: 1
   bufferResetMultiplier: 5
@@ -485,10 +485,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10374bc5104243799f987faa5d0771c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _input: {fileID: 720713831}
   _controller: {fileID: 1254926910822623554}
   _shouldersTransform: {fileID: 581168077527991220}
-  _model: {fileID: 4095348813756858827}
   MaximumSpeed: 8
 --- !u!114 &7319631017655871910
 MonoBehaviour:

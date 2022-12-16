@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net;
 using Game.Lobby.Services;
 using Game.Lobby.View;
 using Game.State;
@@ -45,7 +46,14 @@ namespace Game.Lobby
         {
             _gameState.LobbyState.IsServer = false;
             if (_gameState.LobbyState.Username == "") return;
-            _roomManager.StartClient(new Uri(host));
+
+            IPAddress ipAddress;
+            if (host == "localhost" || host == "127.0.0.1")
+                ipAddress = IPAddress.Loopback;
+            else
+                ipAddress = IPAddress.Parse(host);
+
+            _roomManager.Connect(ipAddress);
             _lobbyUI.GotoLobby(false);
         }
 
@@ -58,19 +66,18 @@ namespace Game.Lobby
         public void SetUsername(string username) =>
             _gameState.LobbyState.Username = username;
 
-        private void OnClientConnected(NetworkConnection conn, RoomPlayer player)
+        private void OnClientConnected(NetworkIdentity identity, RoomPlayer player)
         {
-            var roomPlayer = conn.identity.GetComponent<RoomPlayer>();
-            _lobbyUI.DisplayPlayer(roomPlayer);
+            _lobbyUI.DisplayPlayer(player);
 
-            if (NetworkClient.localPlayer == conn.identity)
+            if (identity.isLocalPlayer)
             {
-                _localPlayer = roomPlayer;
+                _localPlayer = player;
                 _lobbyUI.AttachLocalPlayer(_localPlayer);
             }
         }
 
-        private void OnClientDisconnected(NetworkConnection conn, RoomPlayer player) =>
+        private void OnClientDisconnected(NetworkIdentity identity, RoomPlayer player) =>
             _lobbyUI.RemovePlayer(player);
 
         private void OnPlayersReady(bool value)

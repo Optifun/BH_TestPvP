@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using Game.Arena;
 using Game.Arena.Character;
 using Game.Lobby.View;
+using kcp2k;
 using Mirror;
 using Static;
 using UnityEngine;
@@ -15,8 +17,8 @@ namespace Game.Lobby.Services
     {
         public event Action<NetworkConnection, AuthenticationData> ClientConnected;
         public event Action<NetworkConnection, AuthenticationData> ClientDisconnected;
-        public Action<NetworkConnection, RoomPlayer> ClientEnterRoom;
-        public Action<NetworkConnection, RoomPlayer> ClientExitRoom;
+        public event Action<NetworkIdentity, RoomPlayer> ClientEnterRoom;
+        public event Action<NetworkIdentity, RoomPlayer> ClientExitRoom;
 
         public ArenaManager ArenaManagerPrefab;
         public ArenaStaticData ArenaStaticData;
@@ -29,10 +31,31 @@ namespace Game.Lobby.Services
         public event Action<bool> PlayersReady;
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
+        public Dictionary<NetworkIdentity, RoomPlayer> LocalRoomPlayers { get; } = new();
 
         public void Initialize(LobbyPresenter lobbyPresenter)
         {
             _lobbyPresenter = lobbyPresenter;
+        }
+
+        public void Connect(IPAddress address)
+        {
+            var uri = BuildURI(address);
+            StartClient(uri);
+        }
+
+        public void OnRoomPlayerConnected(NetworkIdentity netIdentity, RoomPlayer player)
+        {
+            if (LocalRoomPlayers.ContainsKey(netIdentity)) return;
+            LocalRoomPlayers.Add(netIdentity, player);
+            ClientEnterRoom?.Invoke(netIdentity, player);
+        }
+
+        public void OnRoomPlayerDisconnected(NetworkIdentity netIdentity, RoomPlayer player)
+        {
+            if (!LocalRoomPlayers.ContainsKey(netIdentity)) return;
+            LocalRoomPlayers.Remove(netIdentity);
+            ClientExitRoom?.Invoke(netIdentity, player);
         }
 
         public override void OnRoomServerConnect(NetworkConnectionToClient conn)
@@ -102,5 +125,20 @@ namespace Game.Lobby.Services
 
         public override void OnRoomServerPlayersNotReady() =>
             PlayersReady?.Invoke(false);
+
+        private Uri BuildURI(IPAddress address)
+        {
+            if (transport is KcpTransport kcpTransport)
+            {
+                UriBuilder builder = new UriBuilder();
+                var exampleURI = kcpTransport.ServerUri();
+                builder.Scheme = exampleURI.Scheme;
+                builder.Port = exampleURI.Port;
+                builder.Host = address.ToString();
+                return builder.Uri;
+            }
+
+            throw new ArgumentException("Not supported transport");
+        }
     }
 }
