@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using Game.Arena;
 using Game.Arena.Character;
-using Game.Lobby.View;
 using kcp2k;
 using Mirror;
 using Static;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using Object = System.Object;
 
 namespace Game.Lobby.Services
 {
@@ -85,9 +82,10 @@ namespace Game.Lobby.Services
             return roomPlayer.gameObject;
         }
 
-        public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
+        public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject lobbyPlayer)
         {
-            var container = _characterFactory.SpawnCharacter();
+            var roomPlayer = lobbyPlayer.GetComponent<RoomPlayer>();
+            var container = _characterFactory.SpawnCharacter(roomPlayer);
             return container.gameObject;
         }
 

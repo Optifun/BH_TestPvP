@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Game.Arena.Character;
+using Game.Lobby.Services;
 using Static;
 using UnityEngine;
 
@@ -18,12 +19,13 @@ namespace Game.Arena
         }
 
 
-        public CharacterContainer SpawnCharacter()
+        public CharacterContainer SpawnCharacter(RoomPlayer roomPlayer)
         {
             var point = PickRandomPoint();
             var go = Object.Instantiate(_playerPrefab, point.position + Vector3.up * 2, point.rotation);
 
             var container = go.GetComponent<CharacterContainer>();
+            container.RoomPlayer = roomPlayer;
 
             return container;
         }
