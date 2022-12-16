@@ -19,5 +19,7 @@ namespace Static
 
         [field: Tooltip("Delay before next match"), SerializeField]
         public float MatchReloadDelay { get; private set; }
+
+        public GameObject PlayerScorePrefab;
     }
 }

@@ -17,3 +17,4 @@ MonoBehaviour:
   <InvincibilityDuration>k__BackingField: 3
   <RequireHitCount>k__BackingField: 3
   <MatchReloadDelay>k__BackingField: 5
+  PlayerScorePrefab: {fileID: 2951348082343386338, guid: 6c5dc02ecd1378f44b3b66780296f1de, type: 3}

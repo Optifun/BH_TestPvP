@@ -178,6 +178,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 21568551888746264}
+  - {fileID: 920327989337671710}
   m_Father: {fileID: 9109462212544236192}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -257,6 +258,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e251faf5750348698caa6d87ce5cca6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &8205795718915936954
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920327989337671710}
+  m_Layer: 6
+  m_Name: ScorePosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &920327989337671710
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8205795718915936954}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.2, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4095348813756858827}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9109462212544236253
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,6 +488,7 @@ MonoBehaviour:
   RoomPlayer: {fileID: 0}
   <Identity>k__BackingField: {fileID: 9109462212544236195}
   <Transform>k__BackingField: {fileID: 9109462212544236194}
+  <ScorePosition>k__BackingField: {fileID: 920327989337671710}
   <Input>k__BackingField: {fileID: 720713831}
   <Character>k__BackingField: {fileID: 2409076048716716897}
   <CameraController>k__BackingField: {fileID: 2374440022975701984}

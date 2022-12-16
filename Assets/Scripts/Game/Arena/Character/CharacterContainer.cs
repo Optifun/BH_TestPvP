@@ -11,6 +11,7 @@ namespace Game.Arena.Character
 
         [field: SerializeField] public NetworkIdentity Identity { get; private set; }
         [field: SerializeField] public NetworkTransform Transform { get; private set; }
+        [field: SerializeField] public Transform ScorePosition { get; private set; }
         [field: SerializeField] public PlayerInput Input { get; private set; }
         [field: SerializeField] public CharacterComponent Character { get; private set; }
         [field: SerializeField] public CameraController CameraController { get; private set; }

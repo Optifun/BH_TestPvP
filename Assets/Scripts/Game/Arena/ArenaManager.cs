@@ -19,6 +19,7 @@ namespace Game.Arena
         private ArenaStaticData _arenaStaticData;
         private LevelStaticData _levelStaticData;
         private RoomManager _roomManager;
+        private ArenaUI _arenaUI;
 
         public override void OnStartClient()
         {
@@ -34,12 +35,14 @@ namespace Game.Arena
             _roomManager = roomManager;
             _levelStaticData = levelStaticData;
             _arenaStaticData = arenaStaticData;
+            _arenaUI = new ArenaUI(_arenaStaticData, this);
         }
 
         public void SetupPlayer(CharacterContainer container)
         {
             _characters.Add(container.Identity.netId, container);
-            if (container.Identity.isLocalPlayer)
+            var localPlayer = container.Identity.isLocalPlayer;
+            if (localPlayer)
             {
                 AttachCamera(container);
                 InitializeLocalClient(container);
@@ -49,10 +52,10 @@ namespace Game.Arena
                 InitializeClient(container);
             }
 
-            if (isServer)
-            {
-                FillProgress(container);
-            }
+            if (!localPlayer)
+                AttachUI(container);
+
+            if (isServer) FillProgress(container);
         }
 
         [Command]
@@ -84,6 +87,9 @@ namespace Game.Arena
                 GameFinished?.Invoke(_characters[gainerId].Identity, score);
             }
         }
+
+        private void AttachUI(CharacterContainer container) =>
+            _arenaUI.DisplayPlayerScore(container);
 
         private void FillProgress(CharacterContainer container)
         {
