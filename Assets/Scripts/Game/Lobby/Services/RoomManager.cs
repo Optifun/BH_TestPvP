@@ -85,10 +85,10 @@ namespace Game.Lobby.Services
             return roomPlayer.gameObject;
         }
 
-        public override void OnRoomServerAddPlayer(NetworkConnectionToClient conn)
+        public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject roomPlayer)
         {
             var container = _characterFactory.SpawnCharacter();
-            NetworkServer.AddPlayerForConnection(conn, container.gameObject);
+            return container.gameObject;
         }
 
         public void SetupCharacter(CharacterContainer container) =>

@@ -1,4 +1,5 @@
-﻿using Game.Arena.Character;
+﻿using System.Collections.Generic;
+using Game.Arena.Character;
 using Static;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ namespace Game.Arena
     {
         private readonly LevelStaticData _levelStaticData;
         private readonly GameObject _playerPrefab;
+        private HashSet<int> _occupiedPoints = new();
 
         public CharacterFactory(LevelStaticData levelStaticData, GameObject playerPrefab)
         {
@@ -27,10 +29,16 @@ namespace Game.Arena
         }
 
 
-
         private Transform PickRandomPoint()
         {
-            var id = Random.Range(0, _levelStaticData.SpawnPoints.Length);
+            int id;
+            id = Random.Range(0, _levelStaticData.SpawnPoints.Length);
+            while (_occupiedPoints.Contains(id))
+            {
+                id = Random.Range(0, _levelStaticData.SpawnPoints.Length);
+            }
+
+            _occupiedPoints.Add(id);
             var spawnPoint = _levelStaticData.SpawnPoints[id];
             return spawnPoint;
         }
