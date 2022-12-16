@@ -91,30 +91,31 @@ namespace Game.Lobby.Services
             return container.gameObject;
         }
 
-        public void SetupCharacter(CharacterContainer container) =>
-            _arenaManager.SetupPlayer(container);
-
         public override void OnRoomServerSceneChanged(string sceneName)
         {
             if (sceneName == GameplayScene)
             {
+                _arenaManager = Instantiate(ArenaManagerPrefab);
+                NetworkServer.Spawn(_arenaManager.gameObject);
+                
                 _lobbyPresenter.Hide();
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
-                _arenaManager = GameObject.Instantiate(ArenaManagerPrefab);
                 _arenaManager.Initialize(this, ArenaStaticData, _levelData);
             }
         }
 
-        public override void OnRoomClientSceneChanged()
+        public void SetupCharacter(CharacterContainer container)
         {
-            if (SceneManager.GetActiveScene().name == GameplayScene)
-            {
-                _levelData = FindObjectOfType<LevelStaticData>();
-                _characterFactory = new CharacterFactory(_levelData, playerPrefab);
-                _arenaManager = FindObjectOfType<ArenaManager>();
-                _arenaManager.Initialize(this, ArenaStaticData, _levelData);
-            }
+            _arenaManager?.SetupPlayer(container);
+        }
+
+        public void OnClientArenaLoaded(ArenaManager arenaManager)
+        {
+            _arenaManager = arenaManager;
+            _lobbyPresenter.Hide();
+            _levelData = FindObjectOfType<LevelStaticData>();
+            _arenaManager.Initialize(this, ArenaStaticData, _levelData);
         }
 
         public void SwitchToArena() =>

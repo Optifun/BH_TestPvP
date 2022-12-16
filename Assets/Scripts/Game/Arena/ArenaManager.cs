@@ -19,6 +19,12 @@ namespace Game.Arena
         private LevelStaticData _levelStaticData;
         private RoomManager _roomManager;
 
+        public override void OnStartClient()
+        {
+            var roomManager = (RoomManager) NetworkManager.singleton;
+            roomManager.OnClientArenaLoaded(this);
+        }
+
         public void Initialize(
             RoomManager roomManager,
             ArenaStaticData arenaStaticData,
@@ -95,6 +101,7 @@ namespace Game.Arena
 
         private void InitializeClient(CharacterContainer container)
         {
+            container.Character.enabled = false;
             container.Movement.enabled = true;
             container.Rotation.enabled = true;
         }

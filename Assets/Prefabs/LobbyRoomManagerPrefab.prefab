@@ -89,7 +89,8 @@ MonoBehaviour:
   playerPrefab: {fileID: 9109462212544236253, guid: b1460855aa198f34790cf61e50ed5c11, type: 3}
   autoCreatePlayer: 1
   playerSpawnMethod: 0
-  spawnPrefabs: []
+  spawnPrefabs:
+  - {fileID: 250504671928074892, guid: c327c02c273f0634bbb965a8b54206c7, type: 3}
   timeInterpolationGui: 0
   showRoomGUI: 0
   minPlayers: 1
@@ -100,6 +101,7 @@ MonoBehaviour:
   roomSlots: []
   clientIndex: 0
   ArenaManagerPrefab: {fileID: 250504671928074883, guid: c327c02c273f0634bbb965a8b54206c7, type: 3}
+  ArenaStaticData: {fileID: 0}
 --- !u!114 &3766011000084824458
 MonoBehaviour:
   m_ObjectHideFlags: 0
