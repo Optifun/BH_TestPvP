@@ -270,8 +270,10 @@ GameObject:
   - component: {fileID: 9109462212544236195}
   - component: {fileID: 9109462212544236194}
   - component: {fileID: 720713831}
-  - component: {fileID: -2362182362557275195}
   - component: {fileID: 2374440022975701984}
+  - component: {fileID: 2409076048716716897}
+  - component: {fileID: -2362182362557275195}
+  - component: {fileID: 6240455918949673674}
   - component: {fileID: 1541193838}
   - component: {fileID: 7319631017655871910}
   - component: {fileID: 6077796790371805559}
@@ -405,6 +407,37 @@ MonoBehaviour:
   m_DefaultActionMap: Character
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &2374440022975701984
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109462212544236253}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 297ea9aec9f0459c8bee2c93cebfa318, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _headTransform: {fileID: 5081051793508842908}
+  _shouldersTransform: {fileID: 581168077527991220}
+  _rotationSensitive: 0.3
+--- !u!114 &2409076048716716897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9109462212544236253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 635469d0eded4b858f117bdc3facaf28, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  input: {fileID: 720713831}
+  movement: {fileID: 1541193838}
+  cameraController: {fileID: 2374440022975701984}
+  chargeAbility: {fileID: 7319631017655871910}
 --- !u!114 &-2362182362557275195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,11 +453,13 @@ MonoBehaviour:
   <Identity>k__BackingField: {fileID: 9109462212544236195}
   <Transform>k__BackingField: {fileID: 9109462212544236194}
   <Input>k__BackingField: {fileID: 720713831}
+  <Character>k__BackingField: {fileID: 2409076048716716897}
   <CameraController>k__BackingField: {fileID: 2374440022975701984}
   <Movement>k__BackingField: {fileID: 1541193838}
+  <Rotation>k__BackingField: {fileID: 6240455918949673674}
   <Invincibility>k__BackingField: {fileID: 6077796790371805559}
   <ChargeAbility>k__BackingField: {fileID: 7319631017655871910}
---- !u!114 &2374440022975701984
+--- !u!114 &6240455918949673674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -433,14 +468,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 9109462212544236253}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 297ea9aec9f0459c8bee2c93cebfa318, type: 3}
+  m_Script: {fileID: 11500000, guid: cf30c400b7fd4654973919074ee62851, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _input: {fileID: 720713831}
-  _headTransform: {fileID: 5081051793508842908}
-  _shouldersTransform: {fileID: 581168077527991220}
-  _character: {fileID: 9109462212544236192}
-  _rotationSensitive: 0.3
+  movement: {fileID: 1541193838}
+  model: {fileID: 4095348813756858827}
 --- !u!114 &1541193838
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -474,9 +506,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   _detector: {fileID: 923934256319952028}
-  _movement: {fileID: 1541193838}
   _controller: {fileID: 1254926910822623554}
-  _playerLookDirection: {fileID: 581168077527991220}
 --- !u!114 &6077796790371805559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,5 +522,5 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0.1
-  _renderer: {fileID: 5033624732252607407}
-  _movement: {fileID: 1541193838}
+  modelRenderer: {fileID: 5033624732252607407}
+  movement: {fileID: 0}

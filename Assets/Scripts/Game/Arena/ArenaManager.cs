@@ -35,7 +35,11 @@ namespace Game.Arena
             if (container.Identity.isLocalPlayer)
             {
                 AttachCamera(container);
-                InitializeComponents(container);
+                InitializeLocalClient(container);
+            }
+            else
+            {
+                InitializeClient(container);
             }
 
             if (isServer)
@@ -89,12 +93,19 @@ namespace Game.Arena
             }
         }
 
-        private void InitializeComponents(CharacterContainer container)
+        private void InitializeClient(CharacterContainer container)
         {
             container.Movement.enabled = true;
+            container.Rotation.enabled = true;
+        }
+
+        private void InitializeLocalClient(CharacterContainer container)
+        {
             container.Input.enabled = true;
             container.CameraController.enabled = true;
-            
+            container.Movement.enabled = true;
+            container.Rotation.enabled = true;
+
             container.Input.ActivateInput();
             container.ChargeAbility.Initialize(this, _arenaStaticData);
         }

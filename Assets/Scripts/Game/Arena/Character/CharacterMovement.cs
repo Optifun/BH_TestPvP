@@ -1,54 +1,35 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
 
 namespace Game.Arena.Character
 {
     public class CharacterMovement : MonoBehaviour
     {
-        [SerializeField] private PlayerInput _input;
         [SerializeField] private CharacterController _controller;
         [SerializeField] private Transform _shouldersTransform;
-        [SerializeField] private Transform _model;
         [SerializeField] private float MaximumSpeed;
 
+        public Vector3 Movement { get; private set; }
         private Vector3 _velocity;
-        private InputAction _walkAction;
 
-        private void Awake()
+        public void Move(Vector2 input)
         {
-            _walkAction = _input.actions["Walk"];
+            Movement = CorrectDirection(input);
         }
 
         private void FixedUpdate()
         {
-            var direction = _walkAction.ReadValue<Vector2>();
-            var movementVelocity = MovementImpulse(direction);
-
-            _velocity = Vector3.Slerp(_velocity, movementVelocity, 0.33f);
-
-            if (_velocity != Vector3.zero)
-                _model.rotation = Quaternion.Lerp(_model.rotation, Rotate(_velocity), 0.24f);
-
+            _velocity = Vector3.Slerp(_velocity, ApplySpeed(Movement), 0.33f);
             _controller.Move((_velocity + Physics.gravity) * Time.fixedDeltaTime);
         }
 
-        private Vector3 MovementImpulse(Vector2 direction)
-        {
-            if (direction != Vector2.zero && _controller.isGrounded)
-            {
-                var impulse = _shouldersTransform.right * direction.x + _shouldersTransform.forward * direction.y;
-                return impulse.normalized * MaximumSpeed;
-            }
+        private Vector3 ApplySpeed(Vector3 direction) =>
+            direction * MaximumSpeed;
 
-            return Vector3.zero;
-        }
-
-        private static Quaternion Rotate(Vector3 movementDirection)
+        private Vector3 CorrectDirection(Vector2 direction)
         {
-            var lookRotation = Quaternion.LookRotation(movementDirection);
-            var yAngle = lookRotation.eulerAngles.y;
-            return Quaternion.Euler(0, yAngle, 0);
+            if (direction == Vector2.zero) return Vector3.zero;
+            var relativeDirection = _shouldersTransform.right * direction.x + _shouldersTransform.forward * direction.y;
+            return relativeDirection.normalized;
         }
 
         public void AddImpulse(Vector3 pushImpulse)

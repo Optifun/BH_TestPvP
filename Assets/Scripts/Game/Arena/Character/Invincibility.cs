@@ -6,8 +6,8 @@ namespace Game.Arena.Character
 {
     public class Invincibility : NetworkBehaviour
     {
-        [SerializeField] private MeshRenderer _renderer;
-        [SerializeField] private CharacterMovement _movement;
+        [SerializeField] private MeshRenderer modelRenderer;
+        [SerializeField] private CharacterMovement movement;
 
         [field: SyncVar] public bool IsInvincible { get; private set; }
 
@@ -24,7 +24,7 @@ namespace Game.Arena.Character
         private void RpcActivateInvincibility(Vector3 pushImpulse, float duration)
         {
             if (isOwned)
-                _movement.AddImpulse(pushImpulse);
+                movement.AddImpulse(pushImpulse);
 
             StartCoroutine(ShowInvincibleState(duration));
         }
@@ -37,7 +37,7 @@ namespace Game.Arena.Character
 
         private IEnumerator ShowInvincibleState(float duration)
         {
-            var material = _renderer.material;
+            var material = modelRenderer.material;
             var oldColor = material.color;
 
             material.color = Color.green;

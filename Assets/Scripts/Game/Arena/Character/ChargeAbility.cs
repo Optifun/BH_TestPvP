@@ -12,22 +12,20 @@ namespace Game.Arena.Character
     public class ChargeAbility : NetworkBehaviour
     {
         [field: SyncVar] public bool IsCharging { get; private set; }
+        public event Action<ChargeAbility> Completed;
+        public Vector3 ChargingDirection { get; private set; }
 
         [SerializeField] private CollisionDetector _detector;
-        [SerializeField] private CharacterMovement _movement;
         [SerializeField] private CharacterController _controller;
-        [SerializeField] private Transform _playerLookDirection;
 
         private ArenaManager _arenaManager;
         private ArenaStaticData _arenaStaticData;
 
-        public Vector3 ChargingDirection { get; set; }
-        public float ChargeVelocity { get; set; }
-        public const float PushForce = 4;
+        private float _chargeVelocity;
+        private const float PushForce = 4;
 
         private void Awake() =>
             _detector.CollisionEnter += OnCollided;
-
 
         public void Initialize(ArenaManager manager, ArenaStaticData staticData)
         {
@@ -35,14 +33,13 @@ namespace Game.Arena.Character
             _arenaManager = manager;
         }
 
-        public void TriggerCharge()
+        public void TriggerCharge(Vector3 movementNormalized)
         {
             if (isLocalPlayer)
             {
-                _movement.enabled = false;
                 var distance = _arenaStaticData.ChargeDistance;
                 var duration = _arenaStaticData.ChargingTime;
-                CmdCharge(_playerLookDirection.forward, distance, duration);
+                CmdCharge(movementNormalized, distance, duration);
             }
         }
 
@@ -50,7 +47,7 @@ namespace Game.Arena.Character
         {
             if (!IsCharging && !isOwned) return;
 
-            _controller.Move(ChargingDirection * ChargeVelocity);
+            _controller.Move(ChargingDirection * _chargeVelocity);
         }
 
         [Command]
@@ -58,7 +55,7 @@ namespace Game.Arena.Character
         {
             IsCharging = true;
             ChargingDirection = forward.normalized;
-            ChargeVelocity = distance / duration;
+            _chargeVelocity = distance / duration;
             StartCoroutine(DisableCharge(duration));
         }
 
@@ -68,7 +65,7 @@ namespace Game.Arena.Character
             yield return new WaitForSeconds(duration);
             IsCharging = false;
             ChargingDirection = Vector3.zero;
-            _movement.enabled = true;
+            Completed?.Invoke(this);
         }
 
         private void OnCollided(GameObject _, Collision target)

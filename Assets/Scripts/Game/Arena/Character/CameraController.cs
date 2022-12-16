@@ -8,17 +8,9 @@ namespace Game.Arena.Character
     [RequireComponent(typeof(PlayerInput))]
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private PlayerInput _input;
         [SerializeField] private Transform _headTransform;
         [SerializeField] private Transform _shouldersTransform;
-        [SerializeField] private Transform _character;
-        private InputAction _lookAction;
         [SerializeField] private float _rotationSensitive = 0.3f;
-
-        private void Awake()
-        {
-            _lookAction = _input.actions["Look"];
-        }
 
         public void AttachCamera(CinemachineVirtualCamera camera)
         {
@@ -26,12 +18,7 @@ namespace Game.Arena.Character
             camera.LookAt = null;
         }
 
-        private void Update()
-        {
-            RotateCamera(_lookAction.ReadValue<Vector2>());
-        }
-
-        private void RotateCamera(Vector2 look)
+        public void RotateCamera(Vector2 look)
         {
             var horizontal = Quaternion.AngleAxis(look.x * _rotationSensitive, Vector3.up);
             var vertical = Quaternion.AngleAxis(look.y * _rotationSensitive, Vector3.left);
