@@ -30,7 +30,7 @@ namespace Game.Arena.Character
         private Vector3 _chargePosition;
         private const float PushForce = 4;
 
-        private void Awake() =>
+        public override void OnStartServer() =>
             _detector.CollisionEnter += OnCollided;
 
         public void Initialize(ArenaManager manager, ArenaStaticData staticData)
@@ -46,22 +46,22 @@ namespace Game.Arena.Character
                 Debug.Log("Trigger charge");
                 var distance = _arenaStaticData.ChargeDistance;
                 var duration = _arenaStaticData.ChargingTime;
-                CmdCharge(movementNormalized, distance, duration);
+                _movement.Move(Vector2.zero);
+                ChargeLocalClient(movementNormalized, distance, duration);
             }
         }
 
         private void FixedUpdate()
         {
-            if (!IsCharging || !isOwned) return;
-
-            _movement.SetVelocity(ChargingDirection * _chargeVelocity);
+            if (IsCharging && isLocalPlayer)
+                _movement.SetVelocity(ChargingDirection * _chargeVelocity);
         }
 
-        [Command]
-        private void CmdCharge(Vector3 forward, float distance, float duration)
+        [Client]
+        private void ChargeLocalClient(Vector3 forward, float distance, float duration)
         {
             Debug.Log("Charging...");
-            _movement.Move(Vector2.zero);
+
             IsCharging = true;
             ChargingDirection = forward.normalized;
             _chargePosition = transform.position;
@@ -72,6 +72,13 @@ namespace Game.Arena.Character
             StartCoroutine(DisableCharge(duration));
         }
 
+        [Command]
+        private void CmdCompleteChargeRpc() =>
+            CompleteChargeRpc();
+
+        [ClientRpc]
+        private void CompleteChargeRpc() =>
+            Completed?.Invoke(this);
 
         private IEnumerator DisableCharge(float duration)
         {
@@ -84,8 +91,7 @@ namespace Game.Arena.Character
 
             IsCharging = false;
             ChargingDirection = Vector3.zero;
-            Debug.Log("Charge completed");
-            Completed?.Invoke(this);
+            CmdCompleteChargeRpc();
         }
 
         private void OnCollided(GameObject _, Collision target)
@@ -103,6 +109,6 @@ namespace Game.Arena.Character
         }
 
         private void OnDestroy() =>
-            _detector.CollisionEnter += OnCollided;
+            _detector.CollisionEnter -= OnCollided;
     }
 }

@@ -16,8 +16,6 @@ namespace Game.Arena.Character
         private InputAction _chargeAction;
         private InputAction _lookAction;
 
-        private bool inputEnabled = true;
-
         private void Awake()
         {
             _walkAction = input.actions["Walk"];
@@ -31,7 +29,7 @@ namespace Game.Arena.Character
         private void FixedUpdate()
         {
             var walk = _walkAction.ReadValue<Vector2>();
-            if (inputEnabled)
+            if (!chargeAbility.IsCharging)
                 movement.Move(walk);
 
             cameraController.RotateCamera(_lookAction.ReadValue<Vector2>());
@@ -41,11 +39,12 @@ namespace Game.Arena.Character
         {
             if (chargeAbility.IsCharging) return;
 
-            inputEnabled = false;
             chargeAbility.TriggerCharge(modelTransform.forward);
         }
 
-        private void OnChargeCompleted(ChargeAbility _) =>
-            inputEnabled = true;
+        private void OnChargeCompleted(ChargeAbility _)
+        {
+            Debug.Log("Charge completed");
+        }
     }
 }
