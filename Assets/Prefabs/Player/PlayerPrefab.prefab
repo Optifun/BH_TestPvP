@@ -470,6 +470,7 @@ MonoBehaviour:
   movement: {fileID: 1541193838}
   cameraController: {fileID: 2374440022975701984}
   chargeAbility: {fileID: 7319631017655871910}
+  modelTransform: {fileID: 4095348813756858827}
 --- !u!114 &-2362182362557275195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -545,6 +546,7 @@ MonoBehaviour:
   syncInterval: 0.1
   _detector: {fileID: 923934256319952028}
   _controller: {fileID: 1254926910822623554}
+  _movement: {fileID: 1541193838}
 --- !u!114 &6077796790371805559
 MonoBehaviour:
   m_ObjectHideFlags: 0

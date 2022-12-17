@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace Game.Arena.Character
 {
@@ -10,6 +11,7 @@ namespace Game.Arena.Character
 
         public Vector3 Movement { get; private set; }
         private Vector3 _velocity;
+        private Vector3 _impulse;
 
         public void Move(Vector2 input)
         {
@@ -19,7 +21,12 @@ namespace Game.Arena.Character
         private void FixedUpdate()
         {
             _velocity = Vector3.Slerp(_velocity, ApplySpeed(Movement), 0.33f);
-            _controller.Move((_velocity + Physics.gravity) * Time.fixedDeltaTime);
+            _controller.Move((_velocity + _impulse + Physics.gravity) * Time.fixedDeltaTime);
+        }
+
+        private void Update()
+        {
+            _impulse = Vector3.Slerp(_impulse, Vector3.zero, 0.1f * Time.deltaTime);
         }
 
         private Vector3 ApplySpeed(Vector3 direction) =>
@@ -32,9 +39,10 @@ namespace Game.Arena.Character
             return relativeDirection.normalized;
         }
 
-        public void AddImpulse(Vector3 pushImpulse)
-        {
-            _velocity += pushImpulse;
-        }
+        public void SetImpulse(Vector3 impulse) =>
+            _impulse = impulse;
+
+        public void AddImpulse(Vector3 pushImpulse) =>
+            _impulse += pushImpulse;
     }
 }

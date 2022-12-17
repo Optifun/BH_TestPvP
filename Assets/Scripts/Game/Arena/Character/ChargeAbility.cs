@@ -17,6 +17,7 @@ namespace Game.Arena.Character
 
         [SerializeField] private CollisionDetector _detector;
         [SerializeField] private CharacterController _controller;
+        [SerializeField] private CharacterMovement _movement;
 
         private ArenaManager _arenaManager;
         private ArenaStaticData _arenaStaticData;
@@ -37,6 +38,7 @@ namespace Game.Arena.Character
         {
             if (isLocalPlayer)
             {
+                Debug.Log("Trigger charge");
                 var distance = _arenaStaticData.ChargeDistance;
                 var duration = _arenaStaticData.ChargingTime;
                 CmdCharge(movementNormalized, distance, duration);
@@ -45,14 +47,16 @@ namespace Game.Arena.Character
 
         private void Update()
         {
-            if (!IsCharging && !isOwned) return;
+            if (!IsCharging || !isOwned) return;
 
-            _controller.Move(ChargingDirection * _chargeVelocity);
+            _movement.SetImpulse(ChargingDirection * _chargeVelocity);
         }
 
         [Command]
         private void CmdCharge(Vector3 forward, float distance, float duration)
         {
+            Debug.Log("Charging...");
+            _movement.Move(Vector2.zero);
             IsCharging = true;
             ChargingDirection = forward.normalized;
             _chargeVelocity = distance / duration;
@@ -62,9 +66,11 @@ namespace Game.Arena.Character
 
         private IEnumerator DisableCharge(float duration)
         {
-            yield return new WaitForSeconds(duration);
+            yield return new WaitForSecondsRealtime(duration);
+            _movement.SetImpulse(Vector3.zero);
             IsCharging = false;
             ChargingDirection = Vector3.zero;
+            Debug.Log("Charge completed");
             Completed?.Invoke(this);
         }
 

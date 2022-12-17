@@ -10,6 +10,7 @@ namespace Game.Arena.Character
         [SerializeField] private CharacterMovement movement;
         [SerializeField] private CameraController cameraController;
         [SerializeField] private ChargeAbility chargeAbility;
+        [SerializeField] private Transform modelTransform;
 
         private InputAction _walkAction;
         private InputAction _chargeAction;
@@ -30,18 +31,18 @@ namespace Game.Arena.Character
         private void FixedUpdate()
         {
             var walk = _walkAction.ReadValue<Vector2>();
-            movement.Move(walk);
+            if (inputEnabled)
+                movement.Move(walk);
 
             cameraController.RotateCamera(_lookAction.ReadValue<Vector2>());
         }
 
         private void OnChargePerformed(InputAction.CallbackContext _)
         {
-            return;
             if (chargeAbility.IsCharging) return;
 
             inputEnabled = false;
-            chargeAbility.TriggerCharge(movement.Movement);
+            chargeAbility.TriggerCharge(modelTransform.forward);
         }
 
         private void OnChargeCompleted(ChargeAbility _) =>
