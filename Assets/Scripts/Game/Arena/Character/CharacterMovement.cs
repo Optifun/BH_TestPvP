@@ -5,13 +5,13 @@ namespace Game.Arena.Character
 {
     public class CharacterMovement : MonoBehaviour
     {
-        [SerializeField] private CharacterController _controller;
+        // [SerializeField] private CharacterController _controller;
         [SerializeField] private Transform _shouldersTransform;
+        [SerializeField] private Rigidbody _rigidbody;
         [SerializeField] private float MaximumSpeed;
 
         public Vector3 Movement { get; private set; }
         private Vector3 _velocity;
-        private Vector3 _impulse;
 
         public void Move(Vector2 input)
         {
@@ -20,13 +20,8 @@ namespace Game.Arena.Character
 
         private void FixedUpdate()
         {
+            _rigidbody.velocity = _velocity;
             _velocity = Vector3.Slerp(_velocity, ApplySpeed(Movement), 0.33f);
-            _controller.Move((_velocity + _impulse + Physics.gravity) * Time.fixedDeltaTime);
-        }
-
-        private void Update()
-        {
-            _impulse = Vector3.Slerp(_impulse, Vector3.zero, 0.1f * Time.deltaTime);
         }
 
         private Vector3 ApplySpeed(Vector3 direction) =>
@@ -39,10 +34,10 @@ namespace Game.Arena.Character
             return relativeDirection.normalized;
         }
 
-        public void SetImpulse(Vector3 impulse) =>
-            _impulse = impulse;
+        public void SetVelocity(Vector3 impulse) =>
+            _rigidbody.velocity = _velocity = impulse;
 
         public void AddImpulse(Vector3 pushImpulse) =>
-            _impulse += pushImpulse;
+            _rigidbody.AddForce(pushImpulse);
     }
 }

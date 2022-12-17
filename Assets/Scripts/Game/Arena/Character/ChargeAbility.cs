@@ -18,11 +18,16 @@ namespace Game.Arena.Character
         [SerializeField] private CollisionDetector _detector;
         [SerializeField] private CharacterController _controller;
         [SerializeField] private CharacterMovement _movement;
+        [SerializeField] private Rigidbody _rigidbody;
 
         private ArenaManager _arenaManager;
         private ArenaStaticData _arenaStaticData;
 
         private float _chargeVelocity;
+        private float _rigidbodyDrag;
+        private RigidbodyParams _rigidbodyParams;
+        private RigidbodyParams _chargeRigidbodyParams = new() {Drag = 0, Mass = 100, AngularDrag = 0};
+        private Vector3 _chargePosition;
         private const float PushForce = 4;
 
         private void Awake() =>
@@ -45,11 +50,11 @@ namespace Game.Arena.Character
             }
         }
 
-        private void Update()
+        private void FixedUpdate()
         {
             if (!IsCharging || !isOwned) return;
 
-            _movement.SetImpulse(ChargingDirection * _chargeVelocity);
+            _movement.SetVelocity(ChargingDirection * _chargeVelocity);
         }
 
         [Command]
@@ -59,7 +64,11 @@ namespace Game.Arena.Character
             _movement.Move(Vector2.zero);
             IsCharging = true;
             ChargingDirection = forward.normalized;
+            _chargePosition = transform.position;
+
             _chargeVelocity = distance / duration;
+            _rigidbodyParams = new RigidbodyParams(_rigidbody);
+            _chargeRigidbodyParams.Apply(_rigidbody);
             StartCoroutine(DisableCharge(duration));
         }
 
@@ -67,7 +76,12 @@ namespace Game.Arena.Character
         private IEnumerator DisableCharge(float duration)
         {
             yield return new WaitForSecondsRealtime(duration);
-            _movement.SetImpulse(Vector3.zero);
+            _rigidbodyParams.Apply(_rigidbody);
+            _movement.SetVelocity(Vector3.zero);
+
+            var translation = transform.position - _chargePosition;
+            Debug.Log($"Travelled distance = {translation.magnitude}, required {_chargeVelocity * duration}");
+
             IsCharging = false;
             ChargingDirection = Vector3.zero;
             Debug.Log("Charge completed");
