@@ -29,6 +29,7 @@ namespace Game.Arena
             scoreUI.SetUsername(container.RoomPlayer.Username);
             scoreUI.SetScore(0);
 
+            Debug.Log($"UI attached to {container.netId}");
             _scores.Add(container.netId, scoreUI);
         }
 

@@ -58,7 +58,7 @@ namespace Game.Lobby
         }
 
         public void StartMatch() =>
-            _roomManager.SwitchToArena();
+            _roomManager.StartMatch();
 
         public void TogglePlayerReady() =>
             _localPlayer.CmdChangeReadyState(!_localPlayer.readyToBegin);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Arena.Character;
@@ -12,7 +13,7 @@ namespace Game.Arena
 {
     public class ArenaManager : NetworkBehaviour
     {
-        public event Action<NetworkIdentity, int> GameFinished;
+        public event Action<CharacterContainer, int> GameFinished;
         public event Action<CharacterContainer, int> HitRegistered;
 
         private readonly SyncDictionary<uint, HitProgress> _playerHits = new();
@@ -42,7 +43,8 @@ namespace Game.Arena
 
         public void SetupPlayer(CharacterContainer container)
         {
-            _characters.Add(container.Identity.netId, container);
+            Debug.Log($"Setup player {container.netId}");
+            _characters.Add(container.netId, container);
             var localPlayer = container.Identity.isLocalPlayer;
             if (localPlayer)
             {
@@ -67,6 +69,7 @@ namespace Game.Arena
             var hitProgress = _playerHits[gainerId].Hits;
             var hitId = hitProgress.FindIndex(hits => hits.NetId == targetId);
 
+            // null
             var playerHits = hitProgress[hitId];
             playerHits.HitCount++;
             hitProgress[hitId] = playerHits;
@@ -83,6 +86,12 @@ namespace Game.Arena
             HitRegistered?.Invoke(playerContainer, score);
         }
 
+        [ClientRpc]
+        private void FinishMatchRpc(CharacterContainer container, int score)
+        {
+            GameFinished?.Invoke(container, score);
+        }
+
 
         private void CheckWinner(uint gainerId)
         {
@@ -91,8 +100,15 @@ namespace Game.Arena
             {
                 var score = hitsList.Sum(hits => hits.HitCount);
                 Debug.Log($"Got winner [{gainerId}]:{score}");
-                GameFinished?.Invoke(_characters[gainerId].Identity, score);
+                FinishMatchRpc(_characters[gainerId], score);
+                StartCoroutine(RestartMatch(_arenaStaticData.MatchReloadDelay));
             }
+        }
+
+        private IEnumerator RestartMatch(float restartTime)
+        {
+            yield return new WaitForSecondsRealtime(restartTime);
+            _roomManager.SwitchToArena();
         }
 
         private void AttachUI(CharacterContainer container) =>

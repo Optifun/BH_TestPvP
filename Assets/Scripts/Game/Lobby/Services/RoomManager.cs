@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using Game.Arena;
 using Game.Arena.Character;
@@ -30,6 +31,7 @@ namespace Game.Lobby.Services
 
         public Dictionary<NetworkConnection, AuthenticationData> Clients { get; } = new();
         public Dictionary<NetworkIdentity, RoomPlayer> LocalRoomPlayers { get; } = new();
+        private Dictionary<NetworkConnection, RoomPlayer> _lobbyPlayers;
 
         public void Initialize(LobbyPresenter lobbyPresenter)
         {
@@ -86,8 +88,23 @@ namespace Game.Lobby.Services
         public override GameObject OnRoomServerCreateGamePlayer(NetworkConnectionToClient conn, GameObject lobbyPlayer)
         {
             var roomPlayer = lobbyPlayer.GetComponent<RoomPlayer>();
-            var container = _characterFactory.SpawnCharacter(roomPlayer);
+            var container = SpawnGamePlayer(roomPlayer);
             return container.gameObject;
+        }
+
+        public override void OnRoomServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            var roomPlayer = _lobbyPlayers[conn];
+            var container = SpawnGamePlayer(roomPlayer);
+            NetworkServer.AddPlayerForConnection(conn, container.gameObject);
+        }
+
+        private CharacterContainer SpawnGamePlayer(RoomPlayer roomPlayer)
+        {
+            var container = _characterFactory.SpawnCharacter(roomPlayer);
+            container.gameObject.name += $" [netId = {roomPlayer.netId}]";
+            Debug.Log($"Spawn player {container.netId} for {roomPlayer.netId}");
+            return container;
         }
 
         public override void OnRoomServerSceneChanged(string sceneName)
@@ -96,7 +113,7 @@ namespace Game.Lobby.Services
             {
                 _arenaManager = Instantiate(ArenaManagerPrefab);
                 NetworkServer.Spawn(_arenaManager.gameObject);
-                
+
                 _lobbyPresenter.Hide();
                 _levelData = FindObjectOfType<LevelStaticData>();
                 _characterFactory = new CharacterFactory(_levelData, playerPrefab);
@@ -112,11 +129,17 @@ namespace Game.Lobby.Services
         public void OnClientArenaLoaded(ArenaManager arenaManager)
         {
             if (GameState.Instance.LobbyState.IsServer) return;
-            
+
             _arenaManager = arenaManager;
             _lobbyPresenter.Hide();
             _levelData = FindObjectOfType<LevelStaticData>();
             _arenaManager.Initialize(this, ArenaStaticData, _levelData);
+        }
+
+        public void StartMatch()
+        {
+            FillLobbyPlayers();
+            SwitchToArena();
         }
 
         public void SwitchToArena() =>
@@ -127,6 +150,13 @@ namespace Game.Lobby.Services
 
         public override void OnRoomServerPlayersNotReady() =>
             PlayersReady?.Invoke(false);
+
+        private void FillLobbyPlayers()
+        {
+            _lobbyPlayers = new();
+            foreach (var pair in LocalRoomPlayers)
+                _lobbyPlayers.Add(pair.Key.connectionToClient, pair.Value);
+        }
 
         private Uri BuildURI(IPAddress address)
         {
