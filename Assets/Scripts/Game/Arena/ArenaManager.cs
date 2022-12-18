@@ -21,6 +21,7 @@ namespace Game.Arena
         private LevelStaticData _levelStaticData;
         private RoomManager _roomManager;
         private ArenaUI _arenaUI;
+        private CharacterContainer _localPlayer;
 
         public override void OnStartClient()
         {
@@ -71,17 +72,15 @@ namespace Game.Arena
             hitProgress[hitId] = playerHits;
             _playerHits[gainerId] = new HitProgress {Hits = hitProgress};
 
-            TargetIncrementHitRpc(gainerIdentity.connectionToClient, gainerId, targetId);
+            TargetIncrementHitRpc(gainerIdentity.connectionToClient, gainerId, targetId, playerHits.HitCount);
             CheckWinner(gainerId);
         }
 
         [TargetRpc]
-        private void TargetIncrementHitRpc(NetworkConnection connection, uint gainerId, uint targetId)
+        private void TargetIncrementHitRpc(NetworkConnection connection, uint gainerId, uint targetId, int score)
         {
-            var playerHits = _playerHits[gainerId].Hits.Find(hit => hit.NetId == targetId);
-            Debug.Log($"hits {playerHits.HitCount}");
             var playerContainer = _characters[targetId];
-            HitRegistered?.Invoke(playerContainer, playerHits.HitCount);
+            HitRegistered?.Invoke(playerContainer, score);
         }
 
 
@@ -126,6 +125,7 @@ namespace Game.Arena
 
         private void InitializeLocalClient(CharacterContainer container)
         {
+            _localPlayer = container;
             container.Input.enabled = true;
             container.CameraController.enabled = true;
             container.Movement.enabled = true;
