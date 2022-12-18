@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Game.Arena;
 using Game.Arena.Character;
+using Game.State;
 using kcp2k;
 using Mirror;
 using Static;
@@ -110,6 +111,8 @@ namespace Game.Lobby.Services
 
         public void OnClientArenaLoaded(ArenaManager arenaManager)
         {
+            if (GameState.Instance.LobbyState.IsServer) return;
+            
             _arenaManager = arenaManager;
             _lobbyPresenter.Hide();
             _levelData = FindObjectOfType<LevelStaticData>();
