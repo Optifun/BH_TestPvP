@@ -28,7 +28,7 @@ namespace Game.Arena.Character
         private RigidbodyParams _rigidbodyParams;
         private RigidbodyParams _chargeRigidbodyParams = new() {Drag = 0, Mass = 100, AngularDrag = 0};
         private Vector3 _chargePosition;
-        private const float PushForce = 4;
+        private const float PushForce = 6;
 
         public override void OnStartServer() =>
             _detector.CollisionEnter += OnCollided;
@@ -99,13 +99,19 @@ namespace Game.Arena.Character
             if (IsCharging == false || !isServer)
                 return;
 
-            if (target.gameObject.TryGetComponent(out CharacterContainer container))
+            if (!target.gameObject.TryGetComponent(out CharacterContainer container)) return;
+
+            Debug.Log("[Server]: Player collided with another player while charge");
+            if (container.Invincibility.IsInvincible)
             {
-                var pushImpulse = target.GetContact(0).normal * PushForce;
-                var invincibilityDuration = _arenaStaticData.InvincibilityDuration;
-                _arenaManager.CmdRegisterHit(netIdentity.netId, container.Identity.netId);
-                container.Invincibility.ApplyInvincibility(pushImpulse, invincibilityDuration);
+                Debug.Log("[Server]: Player cant push invincible player");
+                return;
             }
+
+            var pushImpulse = target.GetContact(0).normal * PushForce;
+            var invincibilityDuration = _arenaStaticData.InvincibilityDuration;
+            _arenaManager.RegisterHit(netIdentity.netId, container.Identity.netId);
+            container.Invincibility.ApplyInvincibility(pushImpulse, invincibilityDuration);
         }
 
         private void OnDestroy() =>

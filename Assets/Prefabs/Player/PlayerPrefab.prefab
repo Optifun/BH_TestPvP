@@ -544,7 +544,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   modelRenderer: {fileID: 5033624732252607407}
-  movement: {fileID: 0}
+  movement: {fileID: 1541193838}
 --- !u!114 &2111416045833614904
 MonoBehaviour:
   m_ObjectHideFlags: 0

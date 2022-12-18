@@ -6,6 +6,7 @@ using Game.Arena.Progress;
 using Game.Lobby.Services;
 using Mirror;
 using Static;
+using UnityEngine;
 
 namespace Game.Arena
 {
@@ -14,7 +15,7 @@ namespace Game.Arena
         public event Action<NetworkIdentity, int> GameFinished;
         public event Action<CharacterContainer, int> HitRegistered;
 
-        private SyncDictionary<uint, HitProgress> _playerHits = new();
+        private readonly SyncDictionary<uint, HitProgress> _playerHits = new();
         private Dictionary<uint, CharacterContainer> _characters = new();
         private ArenaStaticData _arenaStaticData;
         private LevelStaticData _levelStaticData;
@@ -58,23 +59,29 @@ namespace Game.Arena
             if (isServer) FillProgress(container);
         }
 
-        [Command]
-        public void CmdRegisterHit(uint gainerId, uint targetId)
+        [Server]
+        public void RegisterHit(uint gainerId, uint targetId)
         {
+            var gainerIdentity = _characters[gainerId].Identity;
             var hitProgress = _playerHits[gainerId].Hits;
             var hitId = hitProgress.FindIndex(hits => hits.NetId == targetId);
 
             var playerHits = hitProgress[hitId];
             playerHits.HitCount++;
             hitProgress[hitId] = playerHits;
+            _playerHits[gainerId] = new HitProgress {Hits = hitProgress};
 
-            IncrementHitRpc(gainerId, targetId);
+            TargetIncrementHitRpc(gainerIdentity.connectionToClient, gainerId, targetId);
             CheckWinner(gainerId);
         }
 
         [TargetRpc]
-        public void IncrementHitRpc(uint gainerId, uint targetId)
+        private void TargetIncrementHitRpc(NetworkConnection connection, uint gainerId, uint targetId)
         {
+            var playerHits = _playerHits[gainerId].Hits.Find(hit => hit.NetId == targetId);
+            Debug.Log($"hits {playerHits.HitCount}");
+            var playerContainer = _characters[targetId];
+            HitRegistered?.Invoke(playerContainer, playerHits.HitCount);
         }
 
 
@@ -84,6 +91,7 @@ namespace Game.Arena
             if (hitsList.All(hit => hit.HitCount >= _arenaStaticData.RequireHitCount))
             {
                 var score = hitsList.Sum(hits => hits.HitCount);
+                Debug.Log($"Got winner [{gainerId}]:{score}");
                 GameFinished?.Invoke(_characters[gainerId].Identity, score);
             }
         }
@@ -113,6 +121,7 @@ namespace Game.Arena
             container.Character.enabled = false;
             container.Movement.enabled = true;
             container.Rotation.enabled = true;
+            container.ChargeAbility.Initialize(this, _arenaStaticData);
         }
 
         private void InitializeLocalClient(CharacterContainer container)

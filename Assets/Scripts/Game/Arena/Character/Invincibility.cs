@@ -23,13 +23,13 @@ namespace Game.Arena.Character
         [ClientRpc]
         private void RpcActivateInvincibility(Vector3 pushImpulse, float duration)
         {
-            if (isOwned)
+            if (isLocalPlayer)
                 movement.AddImpulse(pushImpulse);
 
             StartCoroutine(ShowInvincibleState(duration));
         }
 
-        [Command]
+        [Command(requiresAuthority = false)]
         private void CmdSetInvincibility(bool value)
         {
             IsInvincible = value;
