@@ -18,7 +18,7 @@ namespace Static
         public float RequireHitCount { get; private set; }
 
         [field: Tooltip("Delay before next match"), SerializeField]
-        public float MatchReloadDelay { get; private set; }
+        public int MatchReloadDelay { get; private set; }
 
         public GameObject PlayerScorePrefab;
     }

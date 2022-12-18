@@ -16,18 +16,20 @@ namespace Game.Arena
         public event Action<CharacterContainer, int> GameFinished;
         public event Action<CharacterContainer, int> HitRegistered;
 
+        [field: SerializeField] private ArenaUI _arenaUI;
+
         private readonly SyncDictionary<uint, HitProgress> _playerHits = new();
         private Dictionary<uint, CharacterContainer> _characters = new();
         private ArenaStaticData _arenaStaticData;
         private LevelStaticData _levelStaticData;
         private RoomManager _roomManager;
-        private ArenaUI _arenaUI;
         private CharacterContainer _localPlayer;
 
         public override void OnStartClient()
         {
             var roomManager = (RoomManager) NetworkManager.singleton;
             roomManager.OnClientArenaLoaded(this);
+            GameFinished += ShowWinner;
         }
 
         public void Initialize(
@@ -38,7 +40,7 @@ namespace Game.Arena
             _roomManager = roomManager;
             _levelStaticData = levelStaticData;
             _arenaStaticData = arenaStaticData;
-            _arenaUI = new ArenaUI(_arenaStaticData, this);
+            _arenaUI.Initialize(_arenaStaticData, this);
         }
 
         public void SetupPlayer(CharacterContainer container)
@@ -69,7 +71,6 @@ namespace Game.Arena
             var hitProgress = _playerHits[gainerId].Hits;
             var hitId = hitProgress.FindIndex(hits => hits.NetId == targetId);
 
-            // null
             var playerHits = hitProgress[hitId];
             playerHits.HitCount++;
             hitProgress[hitId] = playerHits;
@@ -87,10 +88,8 @@ namespace Game.Arena
         }
 
         [ClientRpc]
-        private void FinishMatchRpc(CharacterContainer container, int score)
-        {
+        private void FinishMatchRpc(CharacterContainer container, int score) =>
             GameFinished?.Invoke(container, score);
-        }
 
 
         private void CheckWinner(uint gainerId)
@@ -113,6 +112,9 @@ namespace Game.Arena
 
         private void AttachUI(CharacterContainer container) =>
             _arenaUI.DisplayPlayerScore(container);
+
+        private void ShowWinner(CharacterContainer player, int score) =>
+            _arenaUI.ShowWinner(player, score, _arenaStaticData.MatchReloadDelay);
 
         private void FillProgress(CharacterContainer container)
         {
@@ -151,9 +153,7 @@ namespace Game.Arena
             container.ChargeAbility.Initialize(this, _arenaStaticData);
         }
 
-        public void AttachCamera(CharacterContainer container)
-        {
+        public void AttachCamera(CharacterContainer container) =>
             container.CameraController.AttachCamera(_levelStaticData.ThirdPersonCamera);
-        }
     }
 }

@@ -1,24 +1,47 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Game.Arena.Character;
 using Static;
+using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace Game.Arena
 {
-    public class ArenaUI : IDisposable
+    public class ArenaUI : MonoBehaviour, IDisposable
     {
-        private readonly ArenaStaticData _arenaStaticData;
-        private readonly ArenaManager _arenaManager;
+        [field: SerializeField] private Canvas _endGameCanvas;
+        [field: SerializeField] private TMP_Text _winnerText;
+        [field: SerializeField] private TMP_Text _timerText;
+        private ArenaStaticData _arenaStaticData;
+        private ArenaManager _arenaManager;
 
-        private readonly Dictionary<uint, PlayerScoreUI> _scores = new();
+        private Dictionary<uint, PlayerScoreUI> _scores = new();
 
-        public ArenaUI(ArenaStaticData arenaStaticData, ArenaManager arenaManager)
+        public void Initialize(ArenaStaticData arenaStaticData, ArenaManager arenaManager)
         {
             _arenaStaticData = arenaStaticData;
             _arenaManager = arenaManager;
             _arenaManager.HitRegistered += UpdatePlayerScore;
+        }
+
+        public void ShowWinner(CharacterContainer player, int score, int countDownSeconds)
+        {
+            _endGameCanvas.enabled = true;
+            _winnerText.text = $"Winner: {player.RoomPlayer.Username}, Score: {score}";
+            StartCoroutine(ShowCountDown(countDownSeconds));
+        }
+
+        private IEnumerator ShowCountDown(int countDownSeconds)
+        {
+            int left = countDownSeconds;
+            while (left >= 0)
+            {
+                _timerText.text = left.ToString();
+                yield return new WaitForSecondsRealtime(1);
+                left--;
+            }
         }
 
         public void DisplayPlayerScore(CharacterContainer container)
